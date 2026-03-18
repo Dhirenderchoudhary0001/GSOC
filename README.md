@@ -107,13 +107,13 @@ Repository scan confirms key assumptions:
 
 - Existing `MessageRequest.processed_by` already supports deferred execution.
 - `cronmail.py` already respects `processed_by__lte=now`.
-- No Celery/Redis requirement; zero mandatory infra changes.
+- No Celery/Redis requirement; no new background services required. Rate limiting will use existing Tag-based configuration (for example `teacher_comm_daily_limit`).
 
 #### SendGrid integration strategy
 
 - Primary: native ESP cron scheduling
-- Optional: evaluate SendGrid API scheduling for compatible send paths
-- Fallback: if API constraints appear, continue with stable cron path
+- Optional: only if core deliverables finish early and mentors approve, explore SendGrid API scheduling in a time-boxed spike (max 5 engineering hours)
+- Fallback/default production path: continue with stable cron scheduling
 
 ---
 
@@ -125,7 +125,7 @@ Repository scan confirms key assumptions:
 - Class selection scoped to teacher-owned classes
 - Recipient generation from enrolled students only
 - Compose/preview/send flow using existing MessageRequest pipeline
-- Permission hardening and rate limiting
+- Permission hardening (class-ownership validation, forged-ID rejection) and Tag-based daily rate limiting
 
 #### Technical fit
 
@@ -287,6 +287,7 @@ To keep scope safe within 350 hours, addons will only be started after core mile
 
 - If schedule risk appears, only the first two addons (both High priority) will be included.
 - Remaining addons stay explicitly optional and will be mentor-prioritized.
+- No addon work will be started after week 11 without explicit mentor approval.
 
 ---
 
